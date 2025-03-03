@@ -21,6 +21,28 @@ terms2broaders.py is a Python script that creates a new Excel document where col
 
 THIS Needs 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1, columns A-F (contain A; priref, B; term C; AAT-URI, D; AAT-ID only, E; Full AAT-parentXML, F; parsed XML to human readable form), Sheet2 columns A-C (A; priref, B; term, C; AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
 
+Works on ANY LANGUAGE!
+
+Example Sheet1
+| A | B | C | D | E | F |
+|----------|----------|----------|----------|----------|----------|
+| 16   | schilderij  | http://vocab.getty.edu/aat/300177435   | 300177435   | XML export from OpenRefine   | paintings by form$http://vocab.getty.edu/aat/300033638, paintings (visual works)$http://vocab.getty.edu/aat/300033618, visual works by material or technique$http://vocab.getty.edu/aat/300191091, visual works (works)$http://vocab.getty.edu/aat/300191086, Visual Works (hierarchy name)$http://vocab.getty.edu/aat/300179869, Visual and Verbal Communication (hierarchy name)$http://vocab.getty.edu/aat/300264552, Objects Facet$http://vocab.getty.edu/aat/300264092   |
+| 117   | serviesgoed   | http://vocab.getty.edu/aat/300236054   | 300236054   | XML export from OpenRefine   | sets (groups)$http://vocab.getty.edu/aat/300133146, object groupings by general context$http://vocab.getty.edu/aat/300241508, object groupings$http://vocab.getty.edu/aat/300241507, Object Groupings and Systems (hierarchy name)$http://vocab.getty.edu/aat/300241489, Objects Facet$http://vocab.getty.edu/aat/300264092   |
+| 154   | persoonlijk object   | http://vocab.getty.edu/aat/300238982   | 300238982   | XML export from OpenRefine   | equipment by context$http://vocab.getty.edu/aat/300239170, equipment$http://vocab.getty.edu/aat/300122241, Tools and Equipment (hierarchy name)$http://vocab.getty.edu/aat/300022238, Furnishings and Equipment (hierarchy name)$http://vocab.getty.edu/aat/300264551, Objects Facet$http://vocab.getty.edu/aat/300264092   |
+| 155   | servetring   | http://vocab.getty.edu/aat/300043085   | 300043085   | XML export from OpenRefine   | accessory containers for food service$http://vocab.getty.edu/aat/300198761, containers for serving and consuming food$http://vocab.getty.edu/aat/300198760, culinary containers$http://vocab.getty.edu/aat/300197577, containers by function or context$http://vocab.getty.edu/aat/300197200, containers (receptacles)$http://vocab.getty.edu/aat/300197197, Containers (hierarchy name)$http://vocab.getty.edu/aat/300045611, Furnishings and Equipment (hierarchy name)$http://vocab.getty.edu/aat/300264551, Objects Facet$http://vocab.getty.edu/aat/300264092   |
+
+
+
+Example Sheet2
+| A | B | C |
+|----------|----------|----------|
+| 1   | bord  | http://vocab.getty.edu/aat/300042991   |
+| 6   | diepte   | http://vocab.getty.edu/aat/300072633   |
+| 13   | schenking   | http://vocab.getty.edu/aat/300138913   |
+| 16   | schilderij   | http://vocab.getty.edu/aat/300177435   |
+
+
+
  ## Fix domains
 
  SOMETHING SOMETHING
