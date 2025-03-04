@@ -41,7 +41,7 @@ def process_excel(base_excel):
     result = sheet1.drop(columns=['URIs', 'Matches'])
     output_file = 'terms_with_matches.xlsx'
     result.to_excel(output_file, index=False)
-    print(f"Output saved to {output_file}")
+    print(f"You've succesfully build a thesaurus! Output saved to {output_file}")
 
 # Run the function
 process_excel('terms_need_broaders.xlsx')
