@@ -1,7 +1,8 @@
 # The Thesaurus Builder
-Building a thesaurus from pre-existing terms in your database.
 
+Building a hierarchical thesaurus from pre-existing terms in your database.
 
+@Nondenon how about adding a ## Purpose paragraph describing the starting situation (ie problem that needs to be solved), the expected input and the result
 
 - The Thesaurus Builder
   - [Build from existing terms](#build-from-existing-terms)
@@ -11,7 +12,7 @@ Building a thesaurus from pre-existing terms in your database.
   - [Resolve a hierarchy...] with resolve_hierarchy.py
   - [Validate domains] with validate_domains.py
 
- ## Build from existing terms
+## Build from existing terms
 You need:
 - database with list of terms + their AAT URI's
 - OpenRefine
@@ -19,7 +20,9 @@ You need:
 - Excel
 
 ### How does it work?
-To start you have to have a list of terms that are already aligned with the [Art & Architecture Thesaurus](https://vocab.getty.edu/sparql). Just a list of terms + their URI is enough. Keep in mind that you want to export a recordnumber/documentnumber/priref/whatever from you database in order to later be able to import the broader terms.
+To start you have to have a list of terms that are already aligned with the [Art & Architecture Thesaurus](https://vocab.getty.edu/sparql). Just a list of terms + their URI is enough. (@Nondenon Include recordnumber here?) Make sure to clean up your terms: in OpenRefine, click the column, Edit cells -> Common transforms -> trim leading and trailing whitespace. 
+
+Keep in mind that you want to export a recordnumber/documentnumber/priref/whatever from you database in order to later be able to import the broader terms.
 
 Run the list through OpenRefine to resolve the broader terms. Make sure to have a column with the *ID ONLY* (exclude the prefix). Use this GREL on that column (Add column by fetching URL's):
 
@@ -30,8 +33,9 @@ Turn it into something human readable with Add column based on this column, GREL
 
 `value.parseXml().select('Preferred_Parent')[0].select('Parent_String')[0].ownText()`
 
-Export to .xslx
-The last column with the human-readable parent structure must be changed from (example):
+## Export to .xslx
+
+Before you export to Excel, the last column with the human-readable parent structure must be changed from (example):
 
 ```sets (groups) [300133146], object groupings by general context [300241508], object groupings [300241507], Object Groupings and Systems (hierarchy name) [300241489], Objects Facet [300264092]```
 
@@ -39,17 +43,25 @@ into:
 
 ```sets (groups)$http://vocab.getty.edu/aat/300133146, object groupings by general context$http://vocab.getty.edu/aat/300241508, object groupings$http://vocab.getty.edu/aat/300241507, Object Groupings and Systems (hierarchy name)$http://vocab.getty.edu/aat/300241489, Objects Facet$http://vocab.getty.edu/aat/300264092```
 
-So be sure to have the full URI there, with the prefix and use [$] as a seperator between term and URI and [, ] (comma space) as a seperator between parents.
+In other words, replace (note the leading space) ` [` by `$http://vocab.getty.edu/aat/` and `]` by nothing. 
+        
+(So be sure to have the full URI there, with the prefix and use [$] as a separator between term and URI and [, ] (comma space) as a seperator between parents.)
 
-Now you have an excel document. In Sheet1 must be the result of your OpenRefine action. Must hold columns A-F (see example below) in column F there are multiple concepts and URI's in one cell. They are the parents to the value in the same row in column B. The concepts and URI's in the cells in column F are seperated by a [$]. Individual concepts and their URI's are seperated by a [ ,] (comma and space) 
+Now you have an excel document. Sheet1 should be the result of your OpenRefine action. It must have column A-F (see example below), named A to F in the topmost row. 
+
+@Nondenon see previous comment. The example does have recordnumbers. 
+
+In column F there are multiple concepts and URI's in one cell. They are the parents to the value in the same row in column B. The concepts and URI's in the cells in column F are seperated by a [$]. Individual concepts and their URI's are seperated by a [ ,] (comma and space) 
+
 Example: 
+
 ```paintings by form$http://vocab.getty.edu/aat/300033638, paintings (visual works)$http://vocab.getty.edu/aat/300033618, etc etc.```
 
 Now make an export of the entire list of terms + their AAT URI's from your database. Export recordnumber, term, AAT-URI. (3 columns). Name them A-B-C. Place these in the same Excel workbook in Sheet2. URI's must be in column C. 
 
 You now have 1 Excel workbook with 2 Sheets. Name this workbook **terms_need_broaders.xslx**
 
-So, to conclude, this action requires 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1, columns A-F (contain A; priref, B; term C; AAT-URI, D; AAT-ID only, E; Full AAT-parentXML, F; parsed XML to human readable form), Sheet2 columns A-C (A; priref, B; term, C; AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
+So, to summarise, this action requires 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1, columns A-F (contain A; priref, B; term C; AAT-URI, D; AAT-ID only, E; Full AAT-parentXML, F; parsed XML to human readable form), Sheet2 columns A-C (A; priref, B; term, C; AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
 
 *terms2broaders.py* is a Python script that creates a new Excel document where all the URI's from column F in Sheet1 are compared to all the URI's in column C from Sheet2 ([Sheet1]F:F => [Sheet2]C:C [<- that is not an Excel formula]). If there is a match it must be returned in column G in the new Excel that the Python script will create. In cell F of Sheet1 there will me more than 1 URI, so it is likely that more than 1 match will come from this action. If so a new column is added. This is your hierarchical tree structure that is created from terms that you allready had in your database. Thus it automatically creates a thesaurus. 
 
