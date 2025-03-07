@@ -4,7 +4,7 @@ Building a thesaurus from pre-existing terms in your database.
 
 
 - The Thesaurus Builder
-  - [Build from existing terms](#build-from-existing-terms)
+  - [Build from existing terms](#build-from-existing-terms) _using terms2broaders.py_ 
   - [Fix domains](#fix-domains)
   - [Terms without a broader but with AAT URI]
   - [Terms without a broader without AAT URI]
@@ -17,6 +17,26 @@ You need:
 - OpenRefine
 - Python
 - Excel
+
+### Why use this?
+If you manage a list of terms in a database management system—such as a museum collection management system—you might have enriched these terms with URIs from the [Art & Architecture Thesaurus (AAT)](https://vocab.getty.edu/sparql). However, your database may not include the hierarchical relationships between these terms.  
+
+The script **terms2broaders.py** helps reconstruct these relationships by identifying broader terms already present in your database. Here’s how it works:  
+
+1. **Extracting Parent URIs from AAT**  
+   - Using OpenRefine, you have resolved your existing AAT URIs to retrieve their broader terms from the AAT hierarchy.  
+   - Each term now has a corresponding list of broader term URIs extracted from AAT.  
+
+2. **Matching Broader Terms to Your Existing Database**  
+   - The script compares these broader term URIs to the URIs already stored in your database.  
+   - If a match is found, the corresponding broader term is suggested as a hierarchical parent.  
+
+### Why is this useful?  
+- It helps **rebuild thesaurus relationships** using only the terms already in your system.  
+- You don’t need to **add new terms manually**—instead, you can link existing ones.  
+- It ensures your database remains **consistent and structured** without introducing unnecessary duplicates.  
+
+In short, **terms2broaders.py** identifies and assigns broader terms to existing terms in your database, saving time and improving thesaurus integration.  
 
 ### How does it work?
 To start you have to have a list of terms that are already aligned with the [Art & Architecture Thesaurus](https://vocab.getty.edu/sparql). Just a list of terms + their URI is enough. Keep in mind that you want to export a recordnumber/documentnumber/priref/whatever from you database in order to later be able to import the broader terms.
