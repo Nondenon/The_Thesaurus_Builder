@@ -1,18 +1,7 @@
 # The Thesaurus Builder
-Building a thesaurus from pre-existing terms in your database.
+Building a thesaurus from pre-existing terms in your database _using terms2broaders.py_.
 
-
-
-- The Thesaurus Builder
-  - [Build from existing terms](#build-from-existing-terms) _using terms2broaders.py_ 
-  - [Fix domains](#fix-domains)
-  - [Terms without a broader but with AAT URI]
-  - [Terms without a broader without AAT URI]
-  - [Resolve a hierarchy...] with resolve_hierarchy.py
-  - [Validate domains] with validate_domains.py
-
- ## Build from existing terms
-You need:
+### You need:
 - database with list of terms + their AAT URI's
 - OpenRefine
 - Python
@@ -91,6 +80,15 @@ Example Sheet2
 | 13   | schenking   | http://vocab.getty.edu/aat/300138913   |
 | 16   | schilderij   | http://vocab.getty.edu/aat/300177435   |
 
+
+# More thesaurus actions...
+[...]
+
+  - [Fix domains](#fix-domains)
+  - [Terms without a broader but with AAT URI]
+  - [Terms without a broader without AAT URI]
+  - [Resolve a hierarchy...] with resolve_hierarchy.py
+  - [Validate domains] with validate_domains.py
 
 
  ## Fix domains
