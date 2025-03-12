@@ -1,5 +1,5 @@
 # The Thesaurus Builder
-Building a thesaurus from pre-existing terms in your database _using terms2broaders.py_.
+Building a hierarchical  thesaurus from pre-existing terms in your database using _terms2broaders.py_.
 
 ### You need:
 - database with list of terms + their AAT URI's
@@ -8,7 +8,7 @@ Building a thesaurus from pre-existing terms in your database _using terms2broad
 - Excel
 
 ### Why use this?
-If you manage a list of terms in a database management system—such as a museum collection management system—you might have enriched these terms with URIs from the [Art & Architecture Thesaurus (AAT)](https://vocab.getty.edu/sparql). However, your database may not include the hierarchical relationships between these terms.  
+If you manage a list of terms in a database management system — such as a museum collection management system — you might have enriched these terms with URIs from the [Art & Architecture Thesaurus (AAT)](https://vocab.getty.edu/sparql). However, your database may not include the hierarchical relationships between these terms.  
 
 The script **terms2broaders.py** helps reconstruct these relationships by identifying broader terms already present in your database. Here’s how it works:  
 
@@ -50,19 +50,19 @@ into:
 
 So be sure to have the full URI there, with the prefix and use [$] as a seperator between term and URI and [, ] (comma space) as a seperator between parents.
 
-Now you have an excel document. In Sheet1 must be the result of your OpenRefine action. Must hold columns A-F (see example below) in column F there are multiple concepts and URI's in one cell. They are the parents to the value in the same row in column B. The concepts and URI's in the cells in column F are seperated by a [$]. Individual concepts and their URI's are seperated by a [ ,] (comma and space) 
+Now you have an excel document. In Sheet1 must be the result of your OpenRefine action. Must hold column names A to F (see example below). In column F there are multiple concepts and URI's in one cell. They are the parents to the value in the same row in column B. The concepts and URI's in the cells in column F are seperated by a [$]. Individual concepts and their URI's are seperated by a [, ] (comma and space) 
 Example: 
 ```paintings by form$http://vocab.getty.edu/aat/300033638, paintings (visual works)$http://vocab.getty.edu/aat/300033618, etc etc.```
 
-Now make an export of the entire list of terms + their AAT URI's from your database. Export recordnumber, term, AAT-URI. (3 columns). Name them A-B-C. Place these in the same Excel workbook in Sheet2. URI's must be in column C. 
+Now make an export of the entire list of terms + their AAT URI's from your database. Export recordnumber, term, AAT-URI. (3 columns). Name them A, B and C. Place these in the same Excel workbook in Sheet2. URI's must be in column C. 
 
 You now have 1 Excel workbook with 2 Sheets. Name this workbook **terms_need_broaders.xslx**
 
-So, to conclude, this action requires 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1, columns A-F (contain A; priref, B; term C; AAT-URI, D; AAT-ID only, E; Full AAT-parentXML, F; parsed XML to human readable form), Sheet2 columns A-C (A; priref, B; term, C; AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
+So, to summarise, this action requires 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1 has columns A to F (contain A: priref, B: term C: AAT-URI, D: AAT-ID only, E: Full AAT-parentXML, F: parsed XML to human readable form), Sheet2 columns A-C (A: priref, B: term, C: AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
 
 *terms2broaders.py* is a Python script that creates a new Excel document where all the URI's from column F in Sheet1 are compared to all the URI's in column C from Sheet2 ([Sheet1]F:F => [Sheet2]C:C [<- that is not an Excel formula]). If there is a match it must be returned in column G in the new Excel that the Python script will create. In cell F of Sheet1 there will me more than 1 URI, so it is likely that more than 1 match will come from this action. If so a new column is added. This is your hierarchical tree structure that is created from terms that you allready had in your database. Thus it automatically creates a thesaurus. 
 
-The example terms here are in Dutch but this works on ANY LANGUAGE(!) because it only looks at the URI's to match, not the strings.
+The example terms here are in Dutch but this works on ANY LANGUAGE(!) because it matches on Getty ID, not on the literal string (term).
 
 Example Sheet1
 | A | B | C | D | E | F |
