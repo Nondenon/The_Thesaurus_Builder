@@ -127,14 +127,16 @@ full_hierarchy = create_hierarchy.loc[
     ['recordnr', 'term', 'URI', 'AAT_ID', 'AAT-parentstring', 'Broader_term']
 ]
 
-No_broader_match = create_hierarchy[
+No_broader_match = create_hierarchy.loc[
     (create_hierarchy['Broader_term'].isna()) &
-    (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False))
+    (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
+    ['recordnr', 'term', 'URI', 'AAT_ID', 'AAT-parentstring']
 ]
 
-No_AAT_URI = create_hierarchy[
+No_AAT_URI = create_hierarchy.loc[
     create_hierarchy['URI'].isna() |
-    (~create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False))
+    (~create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
+    ['recordnr', 'term', 'URI']
 ]
 
 # ---------- Export to Excel ----------
@@ -146,3 +148,4 @@ with pd.ExcelWriter(output_file) as writer:
     create_hierarchy[['recordnr','term','URI','Complete_hierarchy']].to_excel(writer, sheet_name='complete_hierarchy', index=False)
 
 print(f"\nYour thesaurus hierarchy has been built successfully! Output saved as {output_file}")
+
