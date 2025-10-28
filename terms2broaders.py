@@ -1,50 +1,148 @@
 import pandas as pd
+import requests
+import xml.etree.ElementTree as ET
+import re
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+from tqdm import tqdm
 
-#Needs 1 workbook named terms_need_broaders.xslx, which is the result of an OpenRefine action to obtain the parentsXML from the AAT URI attached to terms (Sheet1) and a Collections export (Sheet2). Sheet1, columns A-F (contain A; priref, B; term C; AAT-URI, D; AAT-ID only, E; Full AAT-parentXML, F; parsed XML to human readable form), Sheet2 columns A-C (A; priref, B; term, C; AAT-URI. Keep in mind that export must be of terms + URI with exact match only)
+# ---------- Functions ----------
 
-# Load the workbook and sheets
-def process_excel(base_excel):
-    # Read both sheets into dataframe
-    sheet1 = pd.read_excel(base_excel, sheet_name='Sheet1')
-    sheet2 = pd.read_excel(base_excel, sheet_name='Sheet2')
+def extract_aat_id(uri):
+    if pd.isna(uri):
+        return None
+    parts = uri.split('/aat/')
+    return parts[1] if len(parts) == 2 else None
 
-    # Ensure necessary columns exist
-    required_sheet1_cols = {'B', 'F'}
-    required_sheet2_cols = {'A', 'B', 'C'}
-    
-    if not required_sheet1_cols.issubset(sheet1.columns):
-        raise ValueError("Sheet1 must contain columns B and F.")
-    if not required_sheet2_cols.issubset(sheet2.columns):
-        raise ValueError("Sheet2 must contain columns A, B, and C.")
 
-    # Extract URIs from Sheet1 Column F
-    def extract_uris(cell):
-        if pd.isna(cell):
-            return []
-        return [entry.split('$')[1] for entry in cell.split(', ') if '$' in entry]
+def get_aat_parentstring(aat_id):
+    if not aat_id:
+        return ""
+    url = f"http://vocabsservices.getty.edu/AATService.asmx/AATGetParents?subjectID={aat_id}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return ""
+    try:
+        root = ET.fromstring(response.content)
+        parent_string_text_elem = root.find('.//Parent_String')
+        if parent_string_text_elem is None or not parent_string_text_elem.text:
+            return ""
+        parent_string_text = parent_string_text_elem.text.strip()
+        parents = []
+        for item in parent_string_text.split(', '):
+            match = re.match(r'(.+)\s\[(\d+)\]', item)
+            if match:
+                label = match.group(1)
+                parent_id = match.group(2)
+                uri = f"http://vocab.getty.edu/aat/{parent_id}"
+                parents.append(f"{label}${uri}")
+        return ', '.join(parents)
+    except ET.ParseError:
+        return ""
 
-    sheet1['URIs'] = sheet1['F'].apply(extract_uris)
 
-    # Match URIs exactly and include all matching terms from Sheet2
-    def match_uris(uris):
-        matches = []
-        for uri in uris:
-            matching_rows = sheet2.loc[sheet2['C'] == uri, ['A', 'B']]
-            matches.extend([f"{row['A']}${row['B']}${uri}" for _, row in matching_rows.iterrows()])
-        return matches
+def match_first_broader_from_parentstring(parentstring, full_thesaurus):
+    """Return the first matching broader term (recordnr, term, URI) from ordered parent string."""
+    if pd.isna(parentstring) or not parentstring.strip():
+        return None
+    parents = [p.strip() for p in parentstring.split(', ')]
+    for parent in parents:
+        if '$' not in parent:
+            continue
+        label, uri = parent.split('$', 1)
+        matching_rows = full_thesaurus.loc[full_thesaurus['URI'] == uri, ['recordnr', 'term']]
+        if not matching_rows.empty:
+            row = matching_rows.iloc[0]
+            return f"{row['recordnr']}${row['term']}${uri}"
+    return None
 
-    sheet1['Matches'] = sheet1['URIs'].apply(match_uris)
 
-    # Expand matches into separate columns
-    max_matches = sheet1['Matches'].apply(len).max()
-    for i in range(max_matches):
-        sheet1[f'Match_{i+1}'] = sheet1['Matches'].apply(lambda x: x[i] if i < len(x) else None)
+def build_complete_hierarchy(parentstring, full_thesaurus):
+    """Return all matching parents in order as a single string."""
+    if pd.isna(parentstring) or not parentstring.strip():
+        return ""
+    parents = [p.strip() for p in parentstring.split(', ')]
+    matched_parents = []
+    for parent in parents:
+        if '$' not in parent:
+            continue
+        label, uri = parent.split('$', 1)
+        matching_rows = full_thesaurus.loc[full_thesaurus['URI'] == uri, ['recordnr', 'term', 'URI']]
+        if not matching_rows.empty:
+            row = matching_rows.iloc[0]
+            matched_parents.append(f"{row['recordnr']}${row['term']}${row['URI']}")
+    return ', '.join(matched_parents)
 
-    # Drop intermediate columns and save the resulting dataframe
-    result = sheet1.drop(columns=['URIs', 'Matches'])
-    output_file = 'terms_with_matches.xlsx'
-    result.to_excel(output_file, index=False)
-    print(f"You've succesfully build a thesaurus! Output saved to {output_file}")
 
-# Run the function
-process_excel('terms_need_broaders.xlsx')
+# ---------- Phase 1: Select source CSV ----------
+Tk().withdraw()
+source_file = askopenfilename(title="Select your source CSV (.csv) with AAT URIs", filetypes=[("CSV files", "*.csv")])
+if not source_file:
+    print("No file selected, script stops.")
+    exit()
+
+df = pd.read_csv(source_file, sep=';')
+required_cols = ['recordnr', 'term', 'URI']
+if not set(required_cols).issubset(df.columns):
+    raise ValueError(f"CSV must contain columns: {required_cols}")
+
+# ---------- Fetch AAT parent strings ----------
+df['AAT_ID'] = df['URI'].apply(extract_aat_id)
+parent_strings = []
+print("Fetching parent strings from AAT...")
+for aat_id in tqdm(df['AAT_ID'], desc="Processing AAT IDs"):
+    parent_strings.append(get_aat_parentstring(aat_id))
+df['AAT-parentstring'] = parent_strings
+
+# Keep copy for hierarchy processing
+create_hierarchy = df.copy()
+
+# ---------- Phase 2: Select full thesaurus CSV ----------
+full_file = askopenfilename(title="Select your full thesaurus CSV (.csv)", filetypes=[("CSV files", "*.csv")])
+if not full_file:
+    print("No file selected, script stops.")
+    exit()
+
+full_thesaurus = pd.read_csv(full_file, sep=';')
+required_full_cols = ['recordnr', 'term', 'URI']
+if not set(required_full_cols).issubset(full_thesaurus.columns):
+    raise ValueError(f"CSV must contain columns: {required_full_cols}")
+
+# ---------- Match first broader term ----------
+create_hierarchy['Broader_term'] = create_hierarchy['AAT-parentstring'].apply(
+    lambda ps: match_first_broader_from_parentstring(ps, full_thesaurus)
+)
+
+# ---------- Build complete hierarchy ----------
+create_hierarchy['Complete_hierarchy'] = create_hierarchy['AAT-parentstring'].apply(
+    lambda ps: build_complete_hierarchy(ps, full_thesaurus)
+)
+
+# ---------- Separate sheets ----------
+# Only show relevant columns for the main hierarchy sheet
+full_hierarchy = create_hierarchy.loc[
+    create_hierarchy['Broader_term'].notna(),
+    ['recordnr', 'term', 'URI', 'AAT_ID', 'AAT-parentstring', 'Broader_term']
+]
+
+No_broader_match = create_hierarchy[
+    (create_hierarchy['Broader_term'].isna()) &
+    (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False))
+]
+
+No_AAT_URI = create_hierarchy[
+    create_hierarchy['URI'].isna() |
+    (~create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False))
+]
+
+# ---------- Export to Excel ----------
+output_file = 'thesaurus_with_hierarchy.xlsx'
+with pd.ExcelWriter(output_file) as writer:
+    full_hierarchy.to_excel(writer, sheet_name='full_hierarchy', index=False)
+    No_broader_match.to_excel(writer, sheet_name='No_broader_match', index=False)
+    No_AAT_URI.to_excel(writer, sheet_name='No_AAT_URI', index=False)
+    create_hierarchy[['recordnr','term','URI','Complete_hierarchy']].to_excel(writer, sheet_name='complete_hierarchy', index=False)
+
+print(f"\nYour thesaurus hierarchy has been built successfully! Output saved as {output_file}")
