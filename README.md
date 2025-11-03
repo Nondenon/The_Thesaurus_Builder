@@ -80,18 +80,17 @@ It is recommended to export a subset of your terms that need broaders instead of
 - Keep your CSV files in a known location.
 
 ## Step 3.1: Run the Python script and install the required libraries automatically
-
-1. Save `terms2broaders.py` in the folder where you installed you Python application in.
-2. Navigate to the folder containing `terms2broaders.py`
-3. Open a terminal (Windows) or terminal/command prompt (Mac/Linux) and type in the following command to run the script: 
-   ```bash
-   python terms2broaders.py
-
-## Step 3.2: Run the script yourself from the command prompt
 - Download [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) and [terms2broaders.py](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/terms2broaders.py) from this Github repository and place them into *any* folder you like.
 - Double click `run_terms2broaders.bat` to automatically install the required Python libraries and run the script.
 - Once the libraries are installed the .bat will only check if they are there and then run the script.
 - **This is the easiest way to do run this script, so if you are still a beginner with Python, or not interested in code at all, this is the file for you!**
+
+## Step 3.2: Run the script yourself from the command prompt
+- Save `terms2broaders.py` in the folder where you installed you Python application in.
+- Navigate to the folder containing `terms2broaders.py`
+- Open a terminal (Windows) or terminal/command prompt (Mac/Linux) and type in the following command to run the script: 
+   ```bash
+   python terms2broaders.py
 
 ## Step 4: Operating the script
 File picker windows will appear to ask for your .CSV-file. Now Select your **subset CSV** with a subset of the terms and URIs you want broader terms for. Once you have selected that file a progress bar will show how many IDs have been processed. The script will fetch AAT parent strings directly from the AAT service, for each term. Once it reaches 100% a new window will open:  
@@ -197,19 +196,18 @@ Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere 
 - Bewaar je CSV-bestanden op een bekende locatie.
 
 ## Stap 3.1: Voer het Python-script uit en installeer de vereiste libraries automatisch
-
-1. Sla `terms2broaders.py` op in de map waar je Python-applicatie is geïnstalleerd.
-2. Navigeer naar de map met `terms2broaders.py`
-3. Open een terminal (Windows) of terminal/command prompt (Mac/Linux) en typ het volgende commando om het script uit te voeren: 
-   ```bash
-   python terms2broaders.py
-   ```
-## Stap 3.2: Voer het script zelf uit vanuit de command prompt
 - Download [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) en [terms2broaders.py](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/terms2broaders.py) uit deze Github-repository en plaats ze in *een* map naar keuze.
 - Dubbelklik op `run_terms2broaders.bat` om automatisch de vereiste Python-libraries te installeren en het script uit te voeren.
 - Zodra de libraries geïnstalleerd zijn, zal het .bat-bestand alleen controleren of ze aanwezig zijn en het script uitvoeren.
 - **Dit is de makkelijkste manier om het script uit te voeren. Als je nog een beginner bent met Python of helemaal geen interesse hebt in code, is dit het bestand voor jou!**
 
+## Stap 3.2: Voer het script zelf uit vanuit de command prompt
+- Sla `terms2broaders.py` op in de map waar je Python-applicatie is geïnstalleerd.
+- Navigeer naar de map met `terms2broaders.py`
+- Open een terminal (Windows) of terminal/command prompt (Mac/Linux) en typ het volgende commando om het script uit te voeren: 
+   ```bash
+   python terms2broaders.py
+   ```
 ## Stap 4: Het script gebruiken
 Er verschijnen vensters om je .CSV-bestand te selecteren. Kies nu je **subset CSV** met de subset van termen en URI's waarvoor je bredere termen wilt. Zodra je dat bestand hebt geselecteerd, verschijnt een voortgangsbalk die laat zien hoeveel ID's zijn verwerkt. Het script haalt voor elke term direct de AAT-parentstrings op van de AAT-service. Zodra het 100% bereikt, opent er een nieuw venster:  
 
