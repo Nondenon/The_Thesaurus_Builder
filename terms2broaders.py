@@ -14,7 +14,6 @@ def extract_aat_id(uri):
     parts = uri.split('/aat/')
     return parts[1] if len(parts) == 2 else None
 
-
 def get_aat_parentstring(aat_id):
     if not aat_id:
         return ""
@@ -42,9 +41,7 @@ def get_aat_parentstring(aat_id):
     except ET.ParseError:
         return ""
 
-
 def match_first_broader_from_parentstring(parentstring, full_thesaurus):
-    """Return the first matching broader term (recordnr, term, URI) from ordered parent string."""
     if pd.isna(parentstring) or not parentstring.strip():
         return None
     parents = [p.strip() for p in parentstring.split(', ')]
@@ -58,9 +55,7 @@ def match_first_broader_from_parentstring(parentstring, full_thesaurus):
             return f"{row['recordnr']}${row['term']}${uri}"
     return None
 
-
 def build_complete_hierarchy(parentstring, full_thesaurus):
-    """Return all matching parents in order as a single string."""
     if pd.isna(parentstring) or not parentstring.strip():
         return ""
     parents = [p.strip() for p in parentstring.split(', ')]
@@ -75,6 +70,18 @@ def build_complete_hierarchy(parentstring, full_thesaurus):
             matched_parents.append(f"{row['recordnr']}${row['term']}${row['URI']}")
     return ', '.join(matched_parents)
 
+def get_broader_domain(broader_str, full_thesaurus):
+    """Return domain of the broader term from full thesaurus."""
+    if pd.isna(broader_str):
+        return None
+    parts = broader_str.split('$')
+    if len(parts) != 3:
+        return None
+    uri = parts[2]
+    matching_row = full_thesaurus.loc[full_thesaurus['URI'] == uri, 'domain']
+    if not matching_row.empty:
+        return matching_row.iloc[0]
+    return None
 
 # ---------- Phase 1: Select source CSV ----------
 Tk().withdraw()
@@ -96,7 +103,6 @@ for aat_id in tqdm(df['AAT_ID'], desc="Processing AAT IDs"):
     parent_strings.append(get_aat_parentstring(aat_id))
 df['AAT-parentstring'] = parent_strings
 
-# Keep copy for hierarchy processing
 create_hierarchy = df.copy()
 
 # ---------- Phase 2: Select full thesaurus CSV ----------
@@ -110,9 +116,18 @@ required_full_cols = ['recordnr', 'term', 'URI']
 if not set(required_full_cols).issubset(full_thesaurus.columns):
     raise ValueError(f"CSV must contain columns: {required_full_cols}")
 
+# Add 'domain' column if missing
+if 'domain' not in full_thesaurus.columns:
+    full_thesaurus['domain'] = None
+
 # ---------- Match first broader term ----------
 create_hierarchy['Broader_term'] = create_hierarchy['AAT-parentstring'].apply(
     lambda ps: match_first_broader_from_parentstring(ps, full_thesaurus)
+)
+
+# ---------- Add domain from matched broader ----------
+create_hierarchy['domain'] = create_hierarchy['Broader_term'].apply(
+    lambda x: get_broader_domain(x, full_thesaurus)
 )
 
 # ---------- Build complete hierarchy ----------
@@ -121,31 +136,38 @@ create_hierarchy['Complete_hierarchy'] = create_hierarchy['AAT-parentstring'].ap
 )
 
 # ---------- Separate sheets ----------
-# Only show relevant columns for the main hierarchy sheet
-full_hierarchy = create_hierarchy.loc[
+base_cols = df.columns.tolist()
+extra_cols = [c for c in create_hierarchy.columns if c not in base_cols]
+
+# Matched broaders sheet (domain after Broader_term)
+matched_broaders_cols = base_cols + ['AAT_ID', 'AAT-parentstring', 'Broader_term', 'domain']
+matched_broaders = create_hierarchy.loc[
     create_hierarchy['Broader_term'].notna(),
-    ['recordnr', 'term', 'URI', 'AAT_ID', 'AAT-parentstring', 'Broader_term']
+    [c for c in matched_broaders_cols if c in create_hierarchy.columns]
 ]
 
+# No broader match sheet
+no_broader_cols = base_cols + ['AAT_ID', 'AAT-parentstring']
 No_broader_match = create_hierarchy.loc[
-    (create_hierarchy['Broader_term'].isna()) &
+    (create_hierarchy['Broader_term'].isna()) & 
     (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
-    ['recordnr', 'term', 'URI', 'AAT_ID', 'AAT-parentstring']
+    [c for c in no_broader_cols if c in create_hierarchy.columns]
 ]
 
+# No AAT URI sheet
+no_aat_cols = base_cols
 No_AAT_URI = create_hierarchy.loc[
-    create_hierarchy['URI'].isna() |
+    create_hierarchy['URI'].isna() | 
     (~create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
-    ['recordnr', 'term', 'URI']
+    [c for c in no_aat_cols if c in create_hierarchy.columns]
 ]
 
 # ---------- Export to Excel ----------
 output_file = 'thesaurus_with_hierarchy.xlsx'
 with pd.ExcelWriter(output_file) as writer:
-    full_hierarchy.to_excel(writer, sheet_name='full_hierarchy', index=False)
+    matched_broaders.to_excel(writer, sheet_name='matched_broaders', index=False)
     No_broader_match.to_excel(writer, sheet_name='No_broader_match', index=False)
     No_AAT_URI.to_excel(writer, sheet_name='No_AAT_URI', index=False)
-    create_hierarchy[['recordnr','term','URI','Complete_hierarchy']].to_excel(writer, sheet_name='complete_hierarchy', index=False)
+    create_hierarchy.to_excel(writer, sheet_name='complete_hierarchy', index=False)
 
 print(f"\nYour thesaurus hierarchy has been built successfully! Output saved as {output_file}")
-
