@@ -230,6 +230,4 @@ Het bevat **vier sheets**:
 - **Verwerkingstijd:** Afhankelijk van het aantal termen en de netwerksnelheid, vandaar de aanbeveling om een subset van termen te gebruiken in plaats van de volledige lijst.
 - **Foutafhandeling:** Termen zonder geldige AAT-URI's worden correct afgehandeld en gerapporteerd in de sheet `No_AAT_URI`.  
 - **CSV-formaat:** Zorg dat je CSV-bestanden puntkomma-gescheiden (`;`) en UTF-8 gecodeerd zijn.
-- **Foutafhandeling:** Termen zonder geldige AAT-URI's worden correct verwerkt en gerapporteerd in het tabblad `No_AAT_URI`.  
-- **CSV-formaat:** Zorg dat je CSV-bestanden puntkomma-gescheiden (`;`) en UTF-8 gecodeerd zijn.
 
