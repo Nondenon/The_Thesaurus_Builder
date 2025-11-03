@@ -24,7 +24,7 @@ The **terminal (Command Prompt, PowerShell, or Mac/Linux Terminal)** is how you 
 
 ## Step 1: Install Python
 
-1. Download Python from [python.org](https://www.python.org/downloads/).
+1. Download Python from [python.org](https://www.python.org/downloads/). Windows version is here: [Python for Windows 64-bit-recommended](https://www.python.org/ftp/python/3.15.0/python-3.15.0a1-amd64.exe) MAC-version is here [macOS 64-bit universal2 installer](https://www.python.org/ftp/python/3.15.0/python-3.15.0a1-macos11.pkg)
 2. During installation, **make sure to check "Add Python to PATH"** (Windows) so you can run Python from any terminal.
 3. Run Python in a command window: Windows: Navigate to the folder where your Python script is saved, Shift + Right-click → “Open PowerShell window here” or “Open Command Prompt here”. MacOS/Linux: Open Terminal and navigate to the folder containing your script using cd /path/to/folder.
 4. Verify the installation:
@@ -35,6 +35,11 @@ The **terminal (Command Prompt, PowerShell, or Mac/Linux Terminal)** is how you 
    Install them with pip:  
    ```bash
    pip install requests pandas openpyxl tqdm
+   ```
+   If you are using a corporate laptop with restrictions, you can install the libraries locally with:
+   ```bash
+   python -m pip install requests pandas openpyxl tqdm
+   ```
 
 ## Step 2: Prepare your CSV files
 
@@ -42,22 +47,34 @@ The **terminal (Command Prompt, PowerShell, or Mac/Linux Terminal)** is how you 
 It is recommended to export a subset of your terms that need broaders instead of the full set. In this example a subset of terms related to materials was used. 
 
 - Columns required are **recordnr, term, URI**
-- Example:
+- You can add more columns to the .CSV, like, for instance, *domain* (if the term is a material, technique, objecttype etc). which, if also added to the full thesaurus .CSV file, can be useful if you want to check if the AAT URI's you have previously assigned to the terms are actually in the correct facet.
+- Example of required columns:
 
 | recordnr | term       | URI                               |
 |-------------|-----------|----------------------------------|
 | 16          | painting  | http://vocab.getty.edu/aat/300177435 |
 | 117         | tableware | http://vocab.getty.edu/aat/300236054 |
 
+- Example of required + optional columns:
+
+| recordnr | term       | URI                               | domain |
+|-------------|-----------|----------------------------------|-------------------|
+| 16          | painting  | http://vocab.getty.edu/aat/300177435 | object_name |
+| 117         | tableware | http://vocab.getty.edu/aat/300236054 | object_name |
+
+- Make sure the first 3 columns are named `recordnr`, `term` and `URI` like in the example above.
+- Make sure there are *only* AAT-URI's in the URI column. If you also use other URI's in your souce system, please remove them from the .csv file before starting the Python script, otherwise it will return an error.
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
 ### CSV 2: Full thesaurus
 - Columns required are **recordnr, term, URI**
+- You can add optional columns like domains.
+- Make sure there are *only* AAT-URI's in the URI column.
 - Can include **all terms**, including the ones in CSV 1.  
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
 
 ## Step 3: Place the Python script
 
-1. Save `terms2broaders.py` in a folder you can easily access, e.g.:  
+1. Save `terms2broaders.py` in the folder where you installed you Python application in. 
 2. Keep your CSV files in a known location.
 
 ## Step 4: Run the script
