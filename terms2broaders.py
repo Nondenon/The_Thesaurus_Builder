@@ -140,14 +140,14 @@ base_cols = df.columns.tolist()
 extra_cols = [c for c in create_hierarchy.columns if c not in base_cols]
 
 # Matched broaders sheet (domain after Broader_term)
-matched_broaders_cols = base_cols + ['AAT_ID', 'AAT-parentstring', 'Broader_term', 'domain']
+matched_broaders_cols = base_cols + ['Broader_term', 'domain']
 matched_broaders = create_hierarchy.loc[
     create_hierarchy['Broader_term'].notna(),
     [c for c in matched_broaders_cols if c in create_hierarchy.columns]
 ]
 
 # No broader match sheet
-no_broader_cols = base_cols + ['AAT_ID', 'AAT-parentstring']
+no_broader_cols = base_cols
 No_broader_match = create_hierarchy.loc[
     (create_hierarchy['Broader_term'].isna()) & 
     (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
