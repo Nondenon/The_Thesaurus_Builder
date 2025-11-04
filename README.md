@@ -183,7 +183,7 @@ Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere 
 - **Dit is de makkelijkste manier om het script uit te voeren. Als je nog een beginner bent met Python of helemaal geen interesse hebt in code, is dit het bestand voor jou!**
 
 ## Stap 4: Het script gebruiken
-Er verschijnen vensters om je .CSV-bestand te selecteren. Kies nu je **subset CSV** met de subset van termen en URI's waarvoor je bredere termen wilt. Zodra je dat bestand hebt geselecteerd, verschijnt een voortgangsbalk die laat zien hoeveel ID's zijn verwerkt. Het script haalt voor elke term direct de AAT-parentstrings op van de AAT-service. Zodra het 100% bereikt, opent er een nieuw venster:  
+Er verschijnt een venster om je .CSV-bestand te selecteren. Kies nu je **subset CSV** met de subset van termen en URI's waarvoor je bredere termen wilt. Zodra je dat bestand hebt geselecteerd, verschijnt een voortgangsbalk die laat zien hoeveel ID's zijn verwerkt. Het script haalt voor elke term direct de AAT-parentstrings op van de AAT-service. Zodra het 100% bereikt, opent er een nieuw venster:  
 
 Selecteer nu je **volledige thesaurus CSV**. Het script matcht de **eerste bredere term in volgorde** die in je volledige thesaurus voorkomt.
 
