@@ -112,6 +112,14 @@ Het script gebruikt de URI's om de data te matchen, dus het werkt voor termen in
 - Een database of spreadsheet met je thesaurustermen, elk met een uniek recordnummer of ID.
 - Deze termen moeten afgestemd zijn op de Art & Architecture Thesaurus (https://www.getty.edu/research/tools/vocabularies/aat/)
 - Python 3.6 of hoger geïnstalleerd.
+- Python libraries:
+  ```bash
+   pip install requests pandas openpyxl tqdm
+   ```
+   Als je een werk-laptop met restricties gebruikt, kun je de libraries lokaal installeren met:
+   ```bash
+   python -m pip install requests pandas openpyxl tqdm
+   ```
 - Mogelijkheid om je termen uit de database te exporteren naar een CSV-bestand (puntkomma ;-gescheiden).
 - Internetverbinding (om bredere termen op te halen van de AAT-service).
 
@@ -127,27 +135,13 @@ De **terminal (Command Prompt, PowerShell, of Mac/Linux Terminal)** is hoe je co
 
 ## Stap 1: Installeer Python
 
-1. Download Python van [python.org](https://www.python.org/downloads/).
+1. Download Python van [python.org](https://www.python.org/downloads/). Let er hierbij op dat je de **the standalone version** download.
 2. Vink tijdens de installatie **"Add Python to PATH"** aan (Windows), zodat je Python vanuit elke terminal kunt draaien. De makkelijkste map om Python in te installeren (vooral op een werkcomputer) is C:\Users\*<Je.Naam>*\AppData\Local\Programs\Python\
 3. Start Python in een commandovenster: Windows: Navigeer naar de map waar je Python-script is opgeslagen, Shift + Rechtsklik → “Open PowerShell window here” of “Open Command Prompt here”. MacOS/Linux: Open Terminal en navigeer naar de map met je script met cd /pad/naar/map.
 4. Controleer de installatie:
    ```bash
    python --version
    ```
-### Nu kun je ofwel de vereiste Python-libraries handmatig installeren *of* gewoon [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) uitvoeren om ze automatisch te installeren. Meer info [hier](#stap-31-voer-het-python-script-uit-en-installeer-de-vereiste-libraries-automatisch)
-
-5.1 **Installeer de vereiste Python-libraries handmatig**  
-   Installeer ze met pip:  
-   ```bash
-   pip install requests pandas openpyxl tqdm
-   ```
-   Als je een werk-laptop met restricties gebruikt, kun je de libraries lokaal installeren met:
-   ```bash
-   python -m pip install requests pandas openpyxl tqdm
-   ```
-
-5.2 **Voer het .bat-bestand uit en installeer de libraries automatisch**
-Ga [hier voor meer info](#stap-31-voer-het-python-script-uit-en-installeer-de-vereiste-libraries-automatisch).
 
 ## Stap 2: Bereid je CSV-bestanden voor
 
@@ -181,19 +175,12 @@ Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere 
 - Sla op als **puntkomma-gescheiden CSV** (`.csv`) en UTF-8 gecodeerd.
 - Bewaar je CSV-bestanden op een bekende locatie.
 
-## Stap 3.1: Voer het Python-script uit en installeer de vereiste libraries automatisch
+## Stap 3: Voer het Python-script uit en installeer de vereiste libraries automatisch
 - Download [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) en [terms2broaders.py](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/terms2broaders.py) uit deze Github-repository en plaats ze in *een* map naar keuze.
 - Dubbelklik op `run_terms2broaders.bat` om automatisch de vereiste Python-libraries te installeren en het script uit te voeren.
 - Zodra de libraries geïnstalleerd zijn, zal het .bat-bestand alleen controleren of ze aanwezig zijn en het script uitvoeren.
 - **Dit is de makkelijkste manier om het script uit te voeren. Als je nog een beginner bent met Python of helemaal geen interesse hebt in code, is dit het bestand voor jou!**
 
-## Stap 3.2: Voer het script zelf uit vanuit de command prompt
-- Sla `terms2broaders.py` op in de map waar je Python-applicatie is geïnstalleerd.
-- Navigeer naar de map met `terms2broaders.py`
-- Open een terminal (Windows) of terminal/command prompt (Mac/Linux) en typ het volgende commando om het script uit te voeren: 
-   ```bash
-   python terms2broaders.py
-   ```
 ## Stap 4: Het script gebruiken
 Er verschijnen vensters om je .CSV-bestand te selecteren. Kies nu je **subset CSV** met de subset van termen en URI's waarvoor je bredere termen wilt. Zodra je dat bestand hebt geselecteerd, verschijnt een voortgangsbalk die laat zien hoeveel ID's zijn verwerkt. Het script haalt voor elke term direct de AAT-parentstrings op van de AAT-service. Zodra het 100% bereikt, opent er een nieuw venster:  
 
@@ -216,4 +203,3 @@ Het bevat **vier sheets**:
 - **Verwerkingstijd:** Afhankelijk van het aantal termen en de netwerksnelheid, vandaar de aanbeveling om een subset van termen te gebruiken in plaats van de volledige lijst.
 - **Foutafhandeling:** Termen zonder geldige AAT-URI's worden correct afgehandeld en gerapporteerd in de sheet `No_AAT_URI`.  
 - **CSV-formaat:** Zorg dat je CSV-bestanden puntkomma-gescheiden (`;`) en UTF-8 gecodeerd zijn.
-
