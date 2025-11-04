@@ -62,12 +62,13 @@ It is recommended to export a subset of your terms that need broaders instead of
 | 117         | tableware | http://vocab.getty.edu/aat/300236054 | object_name |
 
 - Make sure the first 3 columns are named `recordnr`, `term` and `URI` like in the example above.
-- Make sure there are *only* AAT-URI's in the URI column. If you also use other URI's in your souce system, please remove them from the .csv file before starting the Python script, otherwise it will return an error.
+- Make sure there are AAT-URI's in the URI column. They can be either the data URI (http://vocab.getty.edu/aat/[id]) or the page URI (http://vocab.getty.edu/page/aat/[id]). If you also use other URI's in your source system, you can leave them in this column, they will be moved to a seperate sheet in the output Excel.
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
+- 
 ### CSV 2: Full thesaurus
 - Columns required are **recordnr, term, URI**
 - You can add optional columns like domains.
-- Make sure there are *only* AAT-URI's in the URI column.
+- Make sure there are AAT-URI's in the URI column. They can be either the data URI (http://vocab.getty.edu/aat/[id]) or the page URI (http://vocab.getty.edu/page/aat/[id]). If you also use other URI's in your source system, you can leave them in this column, they will be moved to a seperate sheet in the output Excel.
 - Can include **all terms**, including the ones in CSV 1.  
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
 - Keep your CSV files in a known location.
@@ -165,7 +166,7 @@ Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere 
 | 117         | tableware | http://vocab.getty.edu/aat/300236054 | object_name |
 
 - Zorg dat de eerste 3 kolommen `recordnr`, `term` en `URI` heten zoals in het voorbeeld hierboven.
-- Zorg dat er *alleen* AAT-URI's in de URI-kolom staan. Als je ook andere URI's in je bronbestand gebruikt, verwijder deze dan uit de .csv voordat je het Python-script start, anders geeft het script een foutmelding.
+- Zorg dat er AAT-URI's in de URI-kolom staan. Dat kunnen de data URI's zijn (http://vocab.getty.edu/aat/[id]) of the page URI's (http://vocab.getty.edu/page/aat/[id]). Als je ook andere URI's in het systeem hebt opgenomen, laat ze hier staan, ze zullen verplaatst worden naar een andere sheet in de output Excel.
 - Sla op als **puntkomma-gescheiden CSV** (`.csv`) en UTF-8 gecodeerd.
 ### CSV 2: Volledige thesaurus
 - Vereiste kolommen zijn **recordnr, term, URI**
