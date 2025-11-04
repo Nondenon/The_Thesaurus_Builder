@@ -1,4 +1,4 @@
-## *Voor Nederlands [klik hier](#thesaurus-hierarchie-bouwer)*
+## *Voor Nederlands [klik hier](#thesaurus-hierarchiebouwer)*
 
 # Thesaurus Hierarchy Builder
 
@@ -117,7 +117,7 @@ It contains **four sheets**:
 
 *Nederlandse versie:*
 
-# Thesaurus Hierarchie Bouwer
+# Thesaurus Hierarchiebouwer
 
 Dit Python-script (terms2broaders.py) bouwt automatisch een hiërarchische thesaurus. Het verrijkt je termen door bredere termen op te halen uit de Art & Architecture Thesaurus (AAT) met behulp van je bestaande termendatabase. Het script werkt in twee stappen: eerst geef je een subset van termen op waarvoor je bredere termen wilt; daarna geef je je volledige thesaurus om deze bredere termen tegen te matchen. Elke term in de output krijgt één bredere term toegewezen, wat zorgt voor een nette hiërarchische structuur.
 Het script gebruikt de URI's om de data te matchen, dus het werkt voor termen in *elke taal*, zolang ze gekoppeld zijn aan de juiste AAT-entiteit.
