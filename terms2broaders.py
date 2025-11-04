@@ -8,11 +8,22 @@ from tqdm import tqdm
 
 # ---------- Functions ----------
 
-def extract_aat_id(uri):
-    if pd.isna(uri):
+def extract_aat_uri(uri_string):
+    """Extracts a clean AAT URI from messy input (supports both /aat/ and /page/aat/)."""
+    if not isinstance(uri_string, str):
         return None
-    parts = uri.split('/aat/')
-    return parts[1] if len(parts) == 2 else None
+    match = re.search(r'(https?://vocab\.getty\.edu(?:/page)?/aat/\d+)', uri_string)
+    if match:
+        return match.group(1)
+    return None
+
+def extract_aat_id(uri_string):
+    """Extracts the AAT ID from a valid AAT URI."""
+    clean_uri = extract_aat_uri(uri_string)
+    if not clean_uri:
+        return None
+    match = re.search(r'/aat/(\d+)', clean_uri)
+    return match.group(1) if match else None
 
 def get_aat_parentstring(aat_id):
     if not aat_id:
@@ -95,8 +106,11 @@ required_cols = ['recordnr', 'term', 'URI']
 if not set(required_cols).issubset(df.columns):
     raise ValueError(f"CSV must contain columns: {required_cols}")
 
+# Clean URIs and extract AAT IDs
+df['Clean_URI'] = df['URI'].apply(extract_aat_uri)
+df['AAT_ID'] = df['Clean_URI'].apply(extract_aat_id)
+
 # ---------- Fetch AAT parent strings ----------
-df['AAT_ID'] = df['URI'].apply(extract_aat_id)
 parent_strings = []
 print("Fetching parent strings from AAT...")
 for aat_id in tqdm(df['AAT_ID'], desc="Processing AAT IDs"):
@@ -139,26 +153,25 @@ create_hierarchy['Complete_hierarchy'] = create_hierarchy['AAT-parentstring'].ap
 base_cols = df.columns.tolist()
 extra_cols = [c for c in create_hierarchy.columns if c not in base_cols]
 
-# Matched broaders sheet (domain after Broader_term)
+# Matched broaders
 matched_broaders_cols = base_cols + ['Broader_term', 'domain']
 matched_broaders = create_hierarchy.loc[
     create_hierarchy['Broader_term'].notna(),
     [c for c in matched_broaders_cols if c in create_hierarchy.columns]
 ]
 
-# No broader match sheet
+# No broader match (AAT only)
 no_broader_cols = base_cols
 No_broader_match = create_hierarchy.loc[
-    (create_hierarchy['Broader_term'].isna()) & 
-    (create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
+    (create_hierarchy['Broader_term'].isna()) &
+    (create_hierarchy['Clean_URI'].notna()),
     [c for c in no_broader_cols if c in create_hierarchy.columns]
 ]
 
-# No AAT URI sheet
+# No AAT URI — includes blanks, Wikidata, other vocabularies, or text
 no_aat_cols = base_cols
 No_AAT_URI = create_hierarchy.loc[
-    create_hierarchy['URI'].isna() | 
-    (~create_hierarchy['URI'].str.startswith("http://vocab.getty.edu/aat/", na=False)),
+    (create_hierarchy['Clean_URI'].isna()) & (create_hierarchy['URI'].notna()),
     [c for c in no_aat_cols if c in create_hierarchy.columns]
 ]
 
@@ -170,4 +183,4 @@ with pd.ExcelWriter(output_file) as writer:
     No_AAT_URI.to_excel(writer, sheet_name='No_AAT_URI', index=False)
     create_hierarchy.to_excel(writer, sheet_name='complete_hierarchy', index=False)
 
-print(f"\nYour thesaurus hierarchy has been built successfully! Output saved as {output_file}")
+print(f"\n✅ Je thesaurus-hiërarchie is succesvol opgebouwd! Bestand opgeslagen als: {output_file}")
