@@ -10,6 +10,14 @@ The script uses the URI's to match the data so it will work on terms in *any lan
 - A database or spreadsheet with your thesaurus terms, each with a unique record number or ID.
 - These terms must be aligned with the Art & Architecture Thesaurus (https://www.getty.edu/research/tools/vocabularies/aat/)
 - Python 3.6 or higher installed.
+- Python libraries:
+   ```bash
+   pip install requests pandas openpyxl tqdm
+   ```
+   Or, if you are using a corporate laptop with restrictions, you can install the libraries locally with:
+   ```bash
+   python -m pip install requests pandas openpyxl tqdm
+   ```
 - Ability to export your terms from the database to a CSV file (semicolon ;-separated).
 - Internet connection (to fetch broader terms from the AAT service).
 
@@ -25,27 +33,12 @@ The **terminal (Command Prompt, PowerShell, or Mac/Linux Terminal)** is how you 
 
 ## Step 1: Install Python
 
-1. Download Python from [python.org](https://www.python.org/downloads/).
+1. Download Python from [python.org](https://www.python.org/downloads/). Make sure to download **the standalone version**
 2. During installation, **make sure to check "Add Python to PATH"** (Windows) so you can run Python from any terminal. The easiest folder to install Python in (especially when working from a corporate machine) is C:\Users\*<Your.Name>*\AppData\Local\Programs\Python\
 3. Run Python in a command window: Windows: Navigate to the folder where your Python script is saved, Shift + Right-click → “Open PowerShell window here” or “Open Command Prompt here”. MacOS/Linux: Open Terminal and navigate to the folder containing your script using cd /path/to/folder.
 4. Verify the installation:
    ```bash
    python --version
-
-### Now you can either manually install the required Pyhton libraries *or* simply run [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) to have them installed automatically. More info [here](#step-31-run-the-python-script-and-install-the-required-libraries-automatically)
-
-5.1 **Install the Required Python libraries manually**  
-   Install them with pip:  
-   ```bash
-   pip install requests pandas openpyxl tqdm
-   ```
-   If you are using a corporate laptop with restrictions, you can install the libraries locally with:
-   ```bash
-   python -m pip install requests pandas openpyxl tqdm
-   ```
-
-5.1 **Run .bat file and install the libraries automatically**
-Go [here for more info](#step-31-run-the-python-script-and-install-the-required-libraries-automatically).
 
 ## Step 2: Prepare your CSV files
 
@@ -79,18 +72,11 @@ It is recommended to export a subset of your terms that need broaders instead of
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
 - Keep your CSV files in a known location.
 
-## Step 3.1: Run the Python script and install the required libraries automatically
+## Step 3: Run the Python script and install the required libraries automatically
 - Download [run_terms2broaders.bat](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/run_terms2broaders.bat) and [terms2broaders.py](https://github.com/Nondenon/The_Thesaurus_Builder/blob/main/terms2broaders.py) from this Github repository and place them into *any* folder you like.
 - Double click `run_terms2broaders.bat` to automatically install the required Python libraries and run the script.
 - Once the libraries are installed the .bat will only check if they are there and then run the script.
 - **This is the easiest way to do run this script, so if you are still a beginner with Python, or not interested in code at all, this is the file for you!**
-
-## Step 3.2: Run the script yourself from the command prompt
-- Save `terms2broaders.py` in the folder where you installed you Python application in.
-- Navigate to the folder containing `terms2broaders.py`
-- Open a terminal (Windows) or terminal/command prompt (Mac/Linux) and type in the following command to run the script: 
-   ```bash
-   python terms2broaders.py
 
 ## Step 4: Operating the script
 File picker windows will appear to ask for your .CSV-file. Now Select your **subset CSV** with a subset of the terms and URIs you want broader terms for. Once you have selected that file a progress bar will show how many IDs have been processed. The script will fetch AAT parent strings directly from the AAT service, for each term. Once it reaches 100% a new window will open:  
