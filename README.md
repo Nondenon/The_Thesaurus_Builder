@@ -67,7 +67,7 @@ It is recommended to export a subset of your terms that need broaders instead of
 - 
 ### CSV 2: Full thesaurus
 - Columns required are **recordnr, term, URI**
-- You can add optional columns like domains.
+- You can add optional columns like domains. If you do, please make sure to rename that column to **domain**.
 - Make sure there are AAT-URI's in the URI column. They can be either the data URI (http://vocab.getty.edu/aat/[id]) or the page URI (http://vocab.getty.edu/page/aat/[id]). If you also use other URI's in your source system, you can leave them in this column, they will be moved to a seperate sheet in the output Excel.
 - Can include **all terms**, including the ones in CSV 1.  
 - Save as **semicolon-separated CSV** (`.csv`) and UTF-8 encoded.
@@ -150,7 +150,7 @@ De **terminal (Command Prompt, PowerShell, of Mac/Linux Terminal)** is hoe je co
 Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere termen nodig hebt in plaats van de volledige set. In dit voorbeeld werd een subset van termen gerelateerd aan materialen gebruikt. 
 
 - Vereiste kolommen zijn **recordnr, term, URI**
-- Je kunt meer kolommen toevoegen aan de .CSV, bijvoorbeeld *domain* (als de term een materiaal, techniek, objecttype etc. is). Als deze ook in de volledige thesaurus .CSV aanwezig is, kan dit handig zijn om te controleren of de AAT-URI's die je eerder aan de termen hebt gekoppeld daadwerkelijk in de juiste categorie vallen.
+- Je kunt meer kolommen toevoegen aan de .CSV, bijvoorbeeld *domain* (als de term een materiaal, techniek, objecttype etc. is). Als deze ook in de volledige thesaurus .CSV aanwezig is, kan dit handig zijn om te controleren of de AAT-URI's die je eerder aan de termen hebt gekoppeld daadwerkelijk in de juiste categorie vallen. Als je dit wilt doen, verander de kolomnaam dan naar **domain**.
 - Voorbeeld van vereiste kolommen:
 
 | recordnr | term       | URI                               |
