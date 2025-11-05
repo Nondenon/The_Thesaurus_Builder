@@ -155,15 +155,15 @@ Het is aanbevolen om een subset van je termen te exporteren waarvoor je bredere 
 
 | recordnr | term       | URI                               |
 |-------------|-----------|----------------------------------|
-| 16          | painting  | http://vocab.getty.edu/aat/300177435 |
-| 117         | tableware | http://vocab.getty.edu/aat/300236054 |
+| 16          | schilderij  | http://vocab.getty.edu/aat/300177435 |
+| 117         | serviesgoed | http://vocab.getty.edu/aat/300236054 |
 
 - Voorbeeld van vereiste + optionele kolommen:
 
 | recordnr | term       | URI                               | domain |
 |-------------|-----------|----------------------------------|-------------------|
-| 16          | painting  | http://vocab.getty.edu/aat/300177435 | object_name |
-| 117         | tableware | http://vocab.getty.edu/aat/300236054 | object_name |
+| 16          | schilderij  | http://vocab.getty.edu/aat/300177435 | objectnaam |
+| 117         | serviesgoed | http://vocab.getty.edu/aat/300236054 | objectnaam |
 
 - Zorg dat de eerste 3 kolommen `recordnr`, `term` en `URI` heten zoals in het voorbeeld hierboven.
 - Zorg dat er AAT-URI's in de URI-kolom staan. Dat kunnen de data URI's zijn (http://vocab.getty.edu/aat/[id]) of the page URI's (http://vocab.getty.edu/page/aat/[id]). Als je ook andere URI's in het systeem hebt opgenomen, laat ze hier staan, ze zullen verplaatst worden naar een andere sheet in de output Excel.
